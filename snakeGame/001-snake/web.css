@@ -1,0 +1,19 @@
+html, body {
+  height:          100%;
+  margin:          0;
+  padding:         0;
+  background:      #121212;
+  text-align:      center;
+  color:           #fff;
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+}
+
+.message-box {
+  position: fixed; /* Ensures it stays on top */
+  top: 0; /* Positions at the top */
+  left: 50%; /* Positions horizontally at center */
+  transform: translateX(-50%); /* Centers it within its width */
+  /* Add other styles like background, padding, etc. */
+}

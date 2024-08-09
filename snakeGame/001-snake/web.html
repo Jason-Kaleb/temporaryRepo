@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Snake</title>
+    <link rel="stylesheet" href="web.css">
+    <script>require=()=>({}); module={}; module.exports=()=>({})</script>
+
+    <script type="module" type="text/javascript">
+
+          import {
+                AssetClass,bytesToHex,Cip30Wallet,WalletHelper,
+                Assets,bytesToText,hexToBytes,
+                Program, Tx,Address, NetworkParams, Value,MintingPolicyHash } from "./helios.js";
+          import {opt,j,gRValue,jtrics} from "./jimba.js";
+
+          opt._R = 1;           //run all
+          opt._O = 1;           //run log() function calls
+          opt._M = 0;           //show stack frames for objects of log
+          opt._F = 0;           //run functions
+          opt._T = 1;           //jtest, jj, jescribe i.e. tests
+          opt._FailsOnly = 0;   //run only failing tests
+          opt._Ob = 0;  
+
+          let balance = "";
+          let wallet = "";
+          let network = "";
+          let walletName = "";
+
+          const cardanoFunction = async () =>
+          {
+              j.s("cardanoFunction");
+
+              const started = "...started";
+              
+              j.log({started});
+
+              const cwindow = window.cardano;
+              
+              if(typeof cwindow != 'undefined')
+              {
+                  if (cwindow.nami)
+                  {
+                    walletName = "nami";
+                  }
+                  else
+                  {
+                    return 0; 
+                  }
+              }
+              else
+              {
+                showMessage("Connect to browsers wallet: Nami");
+              }
+          };
+
+          const showWalletData = async () => 
+	        {
+              const digitalAssets = [];
+
+              const wallet = await eval('window.cardano.' + walletName); 
+
+              j.log({walletName});
+              
+              const walletEnabled = await wallet.enable(); 
+              
+              j.log({walletEnabled});
+              j.check(walletName + "wallet Enabled", walletEnabled, true);
+
+              const walletHandler = (await wallet.enable()); 
+              
+              j.log({walletHandler});
+
+              const walletAPI = await new Cip30Wallet(walletHandler);
+              j.log({walletAPI});
+
+              const walletHelper = new WalletHelper(walletAPI);
+              j.log({walletHelper});
+
+              const baseAddress = (await walletHelper.baseAddress);
+              j.log({baseAddress});
+
+              const bech32Address = baseAddress.toBech32();
+              j.log({bech32Address});
+
+              const balanceLovelace = (await walletHelper.calcBalance()).lovelace.toLocaleString();
+              j.log({balanceLovelace});
+
+              const collateralAda = String((await walletHelper.pickCollateral()).value.lovelace/BigInt(1000000));
+              j.log({collateralAda}) ;
+
+              const shortAddress = bech32Address.toString().slice(0,10) +"..."+ bech32Address.toString().substr(bech32Address.length - 5);
+              j.log({shortAddress})
+              
+              digitalAssets.push({
+                baseAddress:baseAddress,
+                bech32Address:bech32Address,
+                shortAddress:shortAddress,
+                balanceLovelace:balanceLovelace,
+                collateralAda:collateralAda
+              })
+
+              showMessage(`
+                Wallet Name: ${walletName} <br>
+                Balance: ${balanceLovelace} <br>
+                Collateral: ${collateralAda} <br>
+                Wallet Address: ${shortAddress} <br>
+              `);
+
+              j.log({digitalAssets});
+	        }
+
+          function showMessage(message)
+          {
+              const messageBox = document.querySelector('.message-box');
+              messageBox.innerHTML = message;
+              messageBox.style.display = 'block'; // Make sure it's visible
+          }
+
+          addEventListener("DOMContentLoaded", (event) =>
+          {
+              cardanoFunction();
+              showWalletData();
+          });
+    </script>
+    
+  </head>
+  <body>
+    <div class="message-box"></div>
+    <canvas id="canvas" width="700" height="500"></canvas>
+    <script src="base.js"></script>
+    <script src="snake.js"></script>
+    <script src="web.js"></script>
+  </body>
+</html>
